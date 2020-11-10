@@ -4,7 +4,7 @@ SetWorkingDir %A_ScriptDir%
 #SingleInstance, force
 
 ;Show
-Gui, 1:Show, w485 h380, Auto Single Fire by xvorost
+Gui, 1:Show, w485 h380, EFT Helper by xvorost
 Gui, 1:submit, nohide
 ;Crosshair options
 Max = 255
@@ -15,7 +15,7 @@ crosshair1 = 11-11 14-11 14-14 11-14 11-11
 activecrosshair := crosshair1
 ;ASF
 Gui, 1:Font, s12 q5 c181818,Arial
-Gui, 1:Add, GroupBox, x20 y20 w210 h330, ASF
+Gui, 1:Add, GroupBox, x20 y20 w210 h330, EFT Helper
 Gui, 1:Font, s12 q5 c181818,Arial
 ;Crosshair
 Gui, 1:Add, Checkbox,x35 y175 w20 h20 gCheck vXr
