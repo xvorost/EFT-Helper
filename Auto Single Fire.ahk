@@ -4,7 +4,7 @@ SetWorkingDir %A_ScriptDir%
 #SingleInstance, force
 
 ;Show
-Gui, 1:Show, w485 h270, Auto Single Fire by xvorost
+Gui, 1:Show, w485 h380, Auto Single Fire by xvorost
 Gui, 1:submit, nohide
 ;Crosshair options
 Max = 255
@@ -15,26 +15,43 @@ crosshair1 = 11-11 14-11 14-14 11-14 11-11
 activecrosshair := crosshair1
 ;ASF
 Gui, 1:Font, s12 q5 c181818,Arial
-Gui, 1:Add, GroupBox, x20 y20 w210 h220, ASF
+Gui, 1:Add, GroupBox, x20 y20 w210 h330, ASF
 Gui, 1:Font, s12 q5 c181818,Arial
 ;Crosshair
-Gui, 1:Add, Checkbox,x35 y145 w20 h20 gCheck vXr
-Gui, 1:Add, Text, x55 y145, Crosshair
-Gui, 1:Add, Slider, x35 y165 w180 h20 gPicker vAA +TooltipBottom Range1-300 tickinterval1-300, 300
+Gui, 1:Add, Checkbox,x35 y175 w20 h20 gCheck vXr
+Gui, 1:Add, Text, x55 y175, Crosshair
+Gui, 1:Add, Slider, x35 y195 w180 h20 gPicker vAA +TooltipBottom Range1-300 tickinterval1-300, 300
 ;Contacts
-Gui, 1:Add, GroupBox, x255 y20 w210 h220, Contacts:
+Gui, 1:Add, GroupBox, x255 y20 w210 h330, Contacts:
 Gui, 1:Add, Link, x265 y55, <a href="https://vk.com/x_vorost">VKontakte</a>
 Gui, 1:Add, Link, x265 y75, <a href="https://discord.gg/jv8pWMhzDw">Discord</a>
 Gui, 1:Add, Link, x265 y95, <a href="https://github.com/xvorost">GitHub</a>
+;Information
+Gui, 1:Add, GroupBox, x255 y130 w210 h220, Information:
+Gui, 1:Add, Text, x265 y165, Hi bro! This program is
+Gui, 1:Add, Text, x265 y185, for the game
+Gui, 1:Add, Text, x265 y205, Escape from Tarkov,
+Gui, 1:Add, Text, x265 y225, if you want to receive
+Gui, 1:Add, Text, x265 y245, updates, then go to my
+Gui, 1:Add, Text, x265 y265, Discord server in contacts.
 ;Comment
-Gui, 1:Add, Text, x65 y245, Z - pause script
-;Automatic Fire
-Gui, 1:Add, Text, x35 y50, Automatic Fire Delay:
-Gui, 1:Add, Slider, x35  y70 w180 h20 vAFD gSlide Range5-50 tickinterval5-50 AltSubmit
-Gui, 1:Add, Text, x40 y90 w50 h18, 5
-Gui, 1:Add, Text, x165 y90 w50 h18 Right, 50
-Gui, 1:Add, Text, x35 y110, Value:
-Gui, 1:Add, Edit, x80 y105 w70 vValue, 5
+Gui, 1:Add, Text, x150 y355, NumPad 1 - pause script
+;AF
+Gui, 1:Add, Checkbox,x35 y55 gCheck vAF, Automatic Fire [Z]
+Gui, 1:Add, Text, x35 y75, Delay(ms):
+Gui, 1:Add, Slider, x35  y95 w180 h20 vAFD gSlide Range5-50 tickinterval5-50 AltSubmit
+Gui, 1:Add, Text, x40 y115 w50 h18, 5
+Gui, 1:Add, Text, x165 y115 w50 h18 Right, 50
+Gui, 1:Add, Text, x35 y135, Value:
+Gui, 1:Add, Edit, x80 y130 w70 vValue, 5
+;BHop
+Gui, 1:Add, Checkbox,x35 y235 w20 h20 gCheck vBh
+Gui, 1:Add, Text, x55 y235, Longjump - BHop
+Gui, 1:Add, Slider, x35  y255 w180 h20 vBhS gSlideBh Range5-50 tickinterval5-50 AltSubmit
+Gui, 1:Add, Text, x40 y275 w50 h18, 5
+Gui, 1:Add, Text, x165 y275 w50 h18 Right, 50
+Gui, 1:Add, Text, x35 y295, Value:
+Gui, 1:Add, Edit, x80 y290 w70 v1Value, 5
 
 Gui, Show
 return
@@ -46,6 +63,15 @@ Slide:
     val :=  Floor(int)
    
    GuiControl,, Edit1, %val%
+return
+
+SlideBh:
+   Gui,Submit,NoHide
+    int := bhs
+    fra := Mod(int, 10)
+    1val :=  Floor(int)
+   
+   GuiControl,, Edit2, %1val%
 return
 
 Check:
@@ -139,9 +165,11 @@ return
 
 ~$*LButton::
 Gui, 1:submit, nohide
+ 
 {
 	IfWinActive, EscapeFromTarkov
 	{
+        if(AF==1)
 		while(GetKeyState("LButton", "p")) 
 		{
 			Gui, 1:submit, nohide
@@ -156,7 +184,29 @@ return
 
 ;=====================
 
-Z:: 
+~$*Space::
+Gui, 1:submit, nohide
+
+{
+	IfWinActive, EscapeFromTarkov
+	{
+        while(GetKeyState("Space", "p")) 
+        {
+            if(Bh==1)
+            Gui, 1:submit, nohide
+            Send, {Space}
+            Sleep, %BhS%
+            Send, {Space}
+            Sleep, %BhS%
+            return
+        }
+	}
+}
+return
+
+;=====================
+
+Numpad1::
     Suspend
     If A_IsSuspended
         SoundPlay, Deactivated.wav
@@ -168,6 +218,26 @@ End::
 ExitApp
 return
  
+;===================== hotkeys for checkboxes
+
+*Z::
+state0 := true
+    GuiControl,, AF, 1
+    SoundPlay, Activated.wav
+    return
+
+    #If (state0 = true)
+    {
+        *Z::
+        state0 := false
+            GuiControl,, AF, 0
+            SoundPlay, Deactivated.wav
+            return
+    }
+return
+
+;=====================
+
 GuiClose:
 ExitApp
 return
